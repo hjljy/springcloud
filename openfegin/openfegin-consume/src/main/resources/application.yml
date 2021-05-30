@@ -1,0 +1,19 @@
+server:
+  port: 8102
+spring:
+  cloud:
+    nacos:
+      server-addr: 127.0.0.1:8848
+      discovery:
+        service: feign-consume
+# feign 完整配置信息见文档：https://docs.spring.io/spring-cloud-openfeign/docs/current/reference/html/#netflix-feign-starter
+feign:
+  client:
+    config:
+      feign-provider:  #为 feign-provider这个FeignClient配置属性  如果是default 则所有FeignClient都生效
+        connectTimeout: 3000  # 请求链接时间  默认是1s
+        readTimeout: 3000  # 请求响应超时时间 默认是1s
+        loggerLevel: full # 请求日志打印详情  要配合下面的 debug一起使用
+logging:
+  level:
+    cn.hjljy.springcloud.openfeign.consume.OpenFeignService: debug
