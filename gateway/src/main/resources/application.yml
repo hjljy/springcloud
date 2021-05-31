@@ -5,15 +5,23 @@ spring:
     gateway:
       discovery:
         locator:
-          enabled: true
+          enabled: true  # 开启路由网关服务发现
+          lower-case-service-id: true  # 服务名转为小写
+          url-expression: 'lb://'+serviceId   # 服务调用方式  serviceId表示注册中心的服务名称
       routes:
-        - id: service-a
-          uri: lb://service-a
+        # 服务转发
+        - id: test-service  #必填 路由id
+          uri: lb://service-a   # 必填 对应上面的url-expression   表示调用注册中心里面的名为service-a的服务
+          predicates:      # 必填 至少有一种匹配方式
+            - Path=/api/**  # 匹配所有api开头的路径    （其他匹配方式见官方文档）
+          filters:     # 非必填
+            - StripPrefix=1  # 将路径的第一个值去掉后转发 例如 /api/getUser  会变成 /getUser
+        # 路由转发
+        - id: cookie_route
+          uri: http://hjljy.cn/    # 转发到http://hjljy.cn/
           predicates:
-            - Path=/api/**
-          filters:
-            - StripPrefix=1
+            - Cookie=name, hjljy # 如果携带cookie,参数名为name,值为hjljy,则转发
     nacos:
-      server-addr: 127.0.0.1:8848
+      server-addr: 127.0.0.1:8848 # 注册中心地址
       discovery:
         service: gateway
